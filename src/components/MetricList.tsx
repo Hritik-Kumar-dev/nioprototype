@@ -1,4 +1,5 @@
 import type { MetricRow } from "../types";
+import { Typewriter } from "./Typewriter";
 import styles from "./MetricList.module.css";
 
 export interface MetricListProps {
@@ -8,6 +9,7 @@ export interface MetricListProps {
 /**
  * Aligned label/value spec list (NOT a table). The colon column is kept
  * consistent by giving labels a fixed min-width and the colon its own span.
+ * Values are typed in whenever they change.
  */
 export function MetricList({ rows }: MetricListProps) {
   return (
@@ -18,7 +20,9 @@ export function MetricList({ rows }: MetricListProps) {
           <span className={styles.colon} aria-hidden="true">
             :
           </span>
-          <span className={styles.value}>{row.value}</span>
+          <span className={styles.value}>
+            <Typewriter text={row.value} />
+          </span>
         </li>
       ))}
     </ul>

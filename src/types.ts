@@ -32,9 +32,6 @@ export interface FeatureSet {
 /** Complexity bucket the deterministic demo asks each execution path to solve. */
 export type TaskKind = "simple" | "moderate" | "heavy";
 
-/** Which execution path a result belongs to. */
-export type PathId = "baseline" | "withNio" | "withoutNio";
-
 /** Numeric stats for one execution path. */
 export interface PathStats {
   /** 0–100. */

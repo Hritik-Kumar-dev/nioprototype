@@ -2,6 +2,7 @@ import { QualityGauge } from "./QualityGauge";
 import { TrendChart } from "./TrendChart";
 import { MetricList } from "./MetricList";
 import { FeatureChip } from "./FeatureChip";
+import { Typewriter } from "./Typewriter";
 import {
   days,
   formatCount,
@@ -65,7 +66,9 @@ function Card({
           <h3 className={styles.cardTitle}>{title}</h3>
           <p className={styles.cardSubtitle}>{subtitle}</p>
         </div>
-        <span className={styles.badge}>{tokenBadge}</span>
+        <span className={styles.badge}>
+          <Typewriter text={tokenBadge} />
+        </span>
       </div>
 
       {/* Metrics + sparkline + gauge, side by side */}

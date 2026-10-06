@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./QualityGauge.module.css";
 
 export interface QualityGaugeProps {
@@ -10,48 +10,49 @@ export interface QualityGaugeProps {
 }
 
 const STROKE = 9;
+/** Pause so the previous reading is visible before the arc sweeps again. */
+const RESTART_DELAY = 140;
+const DURATION = 900;
 
 /**
- * Circular progress gauge. Animates from its current value to the new value
- * whenever `value` changes (disabled under prefers-reduced-motion).
+ * Circular progress gauge. The arc empties and sweeps up to the new value
+ * every time `value` changes (a single 0 → value sweep under
+ * prefers-reduced-motion is skipped and the value is set directly).
  */
 export function QualityGauge({ value, size = 96, label = "QUALITY" }: QualityGaugeProps) {
   const clamped = Math.min(100, Math.max(0, value));
   const r = (size - STROKE) / 2;
   const c = 2 * Math.PI * r;
 
-  const ref = useRef<SVGCircleElement | null>(null);
-  const shownRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
   const [shown, setShown] = useState(0);
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const from = shownRef.current;
     const to = clamped;
 
-    if (reduced || from === to) {
-      shownRef.current = to;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(to);
       return;
     }
 
-    const t0 = performance.now();
-    const DURATION = 650;
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / DURATION);
-      const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
-      const next = from + (to - from) * eased;
-      shownRef.current = next;
-      setShown(next);
-      if (p < 1) {
-        rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-    rafRef.current = requestAnimationFrame(tick);
+    let raf: number | null = null;
+
+    /* Hold the previous reading for a beat, then sweep 0 → value. */
+    const delay = window.setTimeout(() => {
+      setShown(0);
+      const start = performance.now();
+
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - start) / DURATION);
+        const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+        setShown(to * eased);
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, RESTART_DELAY);
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      window.clearTimeout(delay);
+      if (raf !== null) cancelAnimationFrame(raf);
     };
   }, [clamped]);
 
@@ -78,7 +79,6 @@ export function QualityGauge({ value, size = 96, label = "QUALITY" }: QualityGau
           strokeWidth={STROKE}
         />
         <circle
-          ref={ref}
           cx={size / 2}
           cy={size / 2}
           r={r}

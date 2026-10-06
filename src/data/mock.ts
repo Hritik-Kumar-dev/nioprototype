@@ -12,7 +12,6 @@
 import type {
   FeatureSet,
   ModelOption,
-  PathId,
   PathOutcome,
   PathStats,
   QueryOutcome,
@@ -457,10 +456,3 @@ export function pathRows(path: PathOutcome, modelId: string) {
     { label: "Score", value: formatCount(path.score) },
   ];
 }
-
-/** Which paths are "with NIO" vs "without NIO" — used for feature chips. */
-export const featuresFor: Record<PathId, FeatureSet | null> = {
-  baseline: null,
-  withNio: withNioFeatures,
-  withoutNio: withoutNioFeatures,
-};
