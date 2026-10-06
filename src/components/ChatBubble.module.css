@@ -18,21 +18,22 @@
 
 .bubble {
   max-width: 86%;
-  border-radius: 11px;
-  padding: 7px 9px;
-  font-size: 9.5px;
-  line-height: 1.5;
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .user {
-  background: #0f4fb5;
+  background: #0D4AA8;
   color: #ffffff;
+  border: 1px solid #1A5EC0;
   border-bottom-right-radius: 4px;
 }
 
 .assistant {
-  background: var(--panel-2);
-  border: 1px solid var(--border-soft);
+  background: #111821;
+  border: 1px solid #1B2735;
   color: var(--text-2);
   border-bottom-left-radius: 4px;
 }
@@ -45,15 +46,15 @@
 
 .avatar {
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(21, 156, 255, 0.16);
-  color: var(--blue);
-  margin-top: 2px;
+  background: #123A7A;
+  border: 1px solid var(--blue);
+  /* color will be set via inline style for the icon */
 }
 
 .para {

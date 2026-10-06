@@ -14,6 +14,10 @@
   align-items: center;
   gap: 1px;
   white-space: nowrap;
+  /* Mask the connector line that runs behind the label. */
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--bg);
 }
 
 .top {
@@ -32,6 +36,6 @@
 }
 
 /* Right label (without NIO) has white NIO text per design. */
-.without .bottom {
+.neutral .bottom {
   color: var(--text);
 }

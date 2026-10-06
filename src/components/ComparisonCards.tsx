@@ -2,18 +2,22 @@ import { QualityGauge } from "./QualityGauge";
 import { TrendChart } from "./TrendChart";
 import { MetricList } from "./MetricList";
 import { FeatureChip } from "./FeatureChip";
-import { withNio, withoutNio, days, yTicks, yMax } from "../data/mock";
-import type { MetricRow, FeatureSet } from "../types";
+import {
+  days,
+  formatCount,
+  nioAdvantage,
+  pathRows,
+  withNioFeatures,
+  withoutNioFeatures,
+  yTicks,
+  yMax,
+} from "../data/mock";
+import type { FeatureSet, MetricRow, PathOutcome, QueryOutcome } from "../types";
 import styles from "./ComparisonCards.module.css";
 
-/* Build metric rows from PathMetrics. */
-function toRows(path: typeof withNio): MetricRow[] {
-  return [
-    { label: "Model", value: path.model },
-    { label: "Response time", value: path.responseTime },
-    { label: "Score", value: String(path.score) },
-    { label: "NIO", value: path.nioStatus },
-  ];
+/* Build metric rows from a path outcome. */
+function toRows(path: PathOutcome, modelId: string, nioStatus: string): MetricRow[] {
+  return [...pathRows(path, modelId), { label: "NIO", value: nioStatus }];
 }
 
 /* Feature array from FeatureSet for FeatureChip mapping. */
@@ -26,9 +30,7 @@ function toFeatures(features: FeatureSet): Array<{ name: string; enabled: boolea
   ];
 }
 
-/**
- * Single comparison card (NIO / Without NIO).
- */
+/** Single compact comparison card (NIO / Without NIO). */
 function Card({
   title,
   subtitle,
@@ -38,6 +40,7 @@ function Card({
   rows,
   features,
   trend,
+  tokenBadge,
 }: {
   title: string;
   subtitle: string;
@@ -47,6 +50,7 @@ function Card({
   rows: MetricRow[];
   features: Array<{ name: string; enabled: boolean }>;
   trend: number[];
+  tokenBadge: string;
 }) {
   return (
     <article className={styles.card} aria-labelledby={title.replace(/\s+/g, "-").toLowerCase()}>
@@ -61,15 +65,29 @@ function Card({
           <h3 className={styles.cardTitle}>{title}</h3>
           <p className={styles.cardSubtitle}>{subtitle}</p>
         </div>
+        <span className={styles.badge}>{tokenBadge}</span>
       </div>
 
-      {/* Metrics + gauge row */}
-      <div className={styles.metricsRow}>
-        <div className={styles.metricsLeft}>
+      {/* Metrics + sparkline + gauge, side by side */}
+      <div className={styles.cardBody}>
+        <div className={styles.metrics}>
           <MetricList rows={rows} />
         </div>
-        <div className={styles.metricsGauge} aria-hidden="true">
-          <QualityGauge value={quality} size={90} label="QUALITY" />
+        <div className={styles.spark}>
+          <h4 className={styles.sparkTitle}>Score trend</h4>
+          <TrendChart
+            data={trend}
+            labels={days}
+            yTicks={yTicks}
+            yMax={yMax}
+            showArea={true}
+            areaOpacity={0.08}
+            maxWidth={196}
+            showLabels={false}
+          />
+        </div>
+        <div className={styles.gauge}>
+          <QualityGauge value={quality} size={88} label="QUALITY" />
         </div>
       </div>
 
@@ -79,44 +97,51 @@ function Card({
           <FeatureChip key={f.name} name={f.name} enabled={f.enabled} />
         ))}
       </div>
-
-      {/* Inner trend chart */}
-      <div className={styles.innerChart}>
-        <h4 className={styles.innerChartTitle}>Response Score Trend</h4>
-        <TrendChart data={trend} labels={days} yTicks={yTicks} yMax={yMax} />
-      </div>
     </article>
   );
 }
 
-/** Side-by-side comparison cards. */
-export function ComparisonCards() {
+/** Side-by-side comparison cards with a headline showing NIO's advantage. */
+export function ComparisonCards({ outcome }: { outcome: QueryOutcome }) {
+  const adv = nioAdvantage(outcome);
+  const { modelId, withNio, withoutNio } = outcome;
+
   return (
     <section className={styles.section} aria-labelledby="comparison-title">
       <h2 id="comparison-title" className={styles.visuallyHidden}>
         Execution path comparison
       </h2>
 
+      <p className={styles.summary}>
+        <span className={styles.summaryDot} aria-hidden="true" />
+        For this {outcome.kindLabel.toLowerCase()}, NIO scores{" "}
+        <strong>+{adv.scoreDeltaPct}%</strong> higher, adds{" "}
+        <strong>+{adv.qualityDelta}</strong> quality points and uses{" "}
+        <strong>{adv.tokenSavingsPct}% fewer tokens</strong> than the direct path.
+      </p>
+
       <div className={styles.grid}>
         <Card
           title="NIO"
-          subtitle="Orchestrator"
+          subtitle="(Orchestrator)"
           dotColor="var(--green)"
           dotStyle="ring"
           quality={withNio.quality}
-          rows={toRows(withNio)}
-          features={toFeatures(withNio.features)}
+          rows={toRows(withNio, modelId, "Enabled")}
+          features={toFeatures(withNioFeatures)}
           trend={withNio.trend}
+          tokenBadge={`${formatCount(withNio.tokens)} tokens`}
         />
         <Card
           title="Without NIO"
-          subtitle="Direct to LLM"
+          subtitle="(Direct to LLM)"
           dotColor="var(--text-muted)"
           dotStyle="solid"
           quality={withoutNio.quality}
-          rows={toRows(withoutNio)}
-          features={toFeatures(withoutNio.features)}
+          rows={toRows(withoutNio, modelId, "Disabled")}
+          features={toFeatures(withoutNioFeatures)}
           trend={withoutNio.trend}
+          tokenBadge={`${formatCount(withoutNio.tokens)} tokens`}
         />
       </div>
     </section>

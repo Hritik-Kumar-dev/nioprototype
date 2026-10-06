@@ -16,17 +16,46 @@
   border: 0;
 }
 
+/* Headline line proving NIO's advantage for the current query. */
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 7px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.summary strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.summaryDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.15);
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--sp-6);
+  gap: 20px;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-4) var(--sp-5);
+  gap: 8px;
+  padding: 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--panel);
@@ -41,8 +70,8 @@
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -61,13 +90,14 @@
 
 .titles {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  flex-direction: row;
+  gap: 6px;
+  align-items: baseline;
   min-width: 0;
 }
 
 .cardTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.01em;
@@ -79,23 +109,48 @@
   color: var(--blue);
 }
 
-/* Metrics + gauge */
-.metricsRow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  padding-top: 4px;
-  border-top: 1px solid var(--border-soft);
+.badge {
+  margin-left: auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: var(--panel-2);
+  color: var(--text-2);
+  font-size: 10.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.metricsLeft {
-  flex: 1;
+/* Metrics + sparkline + gauge, side by side */
+.cardBody {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.metrics {
+  flex: 1 1 auto;
   min-width: 0;
 }
 
-.metricsGauge {
-  flex-shrink: 0;
+.spark {
+  flex: 0 0 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sparkTitle {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gauge {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
 }
@@ -103,48 +158,28 @@
 /* Feature chips row */
 .chips {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
-/* Inner chart */
-.innerChart {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border-soft);
-}
-
-.innerChartTitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-2);
-}
-
-.innerChart :global(.wrap) {
-  max-width: 90%;
-}
-
-/* Responsive */
+/* Responsive fallbacks (used when the dashboard falls back to normal flow). */
 @media (max-width: 1023px) {
   .grid {
-    gap: var(--sp-4);
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 639px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .metricsRow {
+  .cardBody {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
-  .metricsGauge {
-    align-self: flex-end;
+  .spark {
+    flex: 1 1 auto;
+  }
+
+  .gauge {
+    align-self: flex-start;
   }
 }

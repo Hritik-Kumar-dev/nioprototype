@@ -32,8 +32,8 @@ export function ChatBubble({ message, showAvatar = false, children }: ChatBubble
   return (
     <div className={styles.assistantRow}>
       {showAvatar && (
-        <span className={styles.avatar} aria-hidden="true">
-          <UserIcon size={11} />
+        <span className={styles.avatar} aria-hidden="true" style={{ color: '#A8B3C2' }}>
+          <UserIcon size={26} />
         </span>
       )}
       {bubble}

@@ -1,0 +1,127 @@
+import { PhoneFrame } from "./PhoneFrame";
+import { ChatScreen } from "./ChatScreen";
+import { FlowConnectors, FlowLabel } from "./FlowConnectors";
+import { baseline, withNio, withoutNio, query } from "../data/mock";
+import type { PhoneMessage } from "../types";
+import styles from "./PhoneFlow.module.css";
+
+/** Build conversation arrays from mock data. */
+function buildCenterMessages(): PhoneMessage[] {
+  return [];
+}
+
+function buildWithNioMessages(): PhoneMessage[] {
+  return [
+    { id: "u1", role: "user", text: [query] },
+    { id: "a1", role: "assistant", text: withNio.response },
+  ];
+}
+
+function buildWithoutNioMessages(): PhoneMessage[] {
+  return [
+    { id: "u1", role: "user", text: [query] },
+    { id: "a1", role: "assistant", text: withoutNio.response },
+  ];
+}
+
+/**
+ * The central branching visual: all phones same size (238x461), positioned per spec.
+ * Stage height: 737 units. Top panel → stage gap: 24 units.
+ * Connectors and labels positioned absolutely within stage.
+ */
+export function PhoneFlow() {
+  return (
+    <section className={styles.section} aria-labelledby="phone-flow-title">
+      <h2 id="phone-flow-title" className={styles.visuallyHidden}>
+        Execution path comparison
+      </h2>
+
+      <div className={styles.phonesWrapper}>
+        <div className={styles.stage}>
+          {/* LEFT phone — With NIO */}
+          <PhoneFrame
+            data-phone="left"
+            label="With NIO execution path"
+            className={styles.leftPhone}
+          >
+            <ChatScreen
+              title="NIO Chat"
+              model={withNio.model}
+              messages={buildWithNioMessages()}
+              showSources={true}
+              sourceLabels={withNio.sources}
+              variant="chat"
+              label="With NIO conversation"
+            />
+          </PhoneFrame>
+
+          {/* CENTER phone — Source query */}
+          <PhoneFrame
+            data-phone="center"
+            label="Original query input"
+            className={styles.centerPhone}
+          >
+            <ChatScreen
+              title="ChatGPT"
+              model={baseline.model}
+              messages={buildCenterMessages()}
+              variant="empty"
+              label="Query input screen"
+            />
+          </PhoneFrame>
+
+          {/* RIGHT phone — Without NIO */}
+          <PhoneFrame
+            data-phone="right"
+            label="Without NIO execution path"
+            className={styles.rightPhone}
+          >
+            <ChatScreen
+              title="ChatGPT"
+              model={withoutNio.model}
+              messages={buildWithoutNioMessages()}
+              showSources={false}
+              sourceLabels={[]}
+              variant="chat"
+              label="Without NIO conversation"
+            />
+          </PhoneFrame>
+
+          {/* Connectors + labels */}
+          <FlowConnectors
+            left={{
+              xStart: 331,
+              xEnd: 165,
+              yTop: 129,
+              yBottom: 239,
+            }}
+            right={{
+              xStart: 589,
+              xEnd: 758,
+              yTop: 129,
+              yBottom: 239,
+            }}
+          />
+
+          <FlowLabel
+            x={94}
+            yTop={129}
+            yBottom={239}
+            topText="with"
+            bottomText="NIO"
+            className={styles.withLabel}
+          />
+
+          <FlowLabel
+            x={778}
+            yTop={129}
+            yBottom={239}
+            topText="without"
+            bottomText="NIO"
+            className={`${styles.withoutLabel} ${styles.without}`}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}

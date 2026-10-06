@@ -1,4 +1,4 @@
-import type { PhoneMessage } from "../types";
+import type { PhoneMessage, QueryPreset } from "../types";
 import { ChatBubble } from "./ChatBubble";
 import { InputBar } from "./InputBar";
 import { SparkleIcon, UserIcon } from "./icons";
@@ -19,11 +19,19 @@ export interface ChatScreenProps {
   variant: "empty" | "chat";
   /** Accessible name for the screen region. */
   label: string;
+  /** When set, the input dock becomes a working chat composer. */
+  onSend?: (text: string) => void;
+  /** Example prompts offered as chips above the input dock. */
+  suggestions?: QueryPreset[];
+  /** Small caption above the suggestion chips. */
+  suggestLabel?: string;
+  /** Placeholder for the input dock. */
+  placeholder?: string;
 }
 
 /**
- * Phone screen content: header, conversation (or empty state), input bar.
- * Shared by all three phones so their chrome is pixel-identical.
+ * Phone screen content: header, conversation (or empty state), suggestion
+ * chips, input bar. Shared by all three phones so their chrome is identical.
  */
 export function ChatScreen({
   title,
@@ -33,7 +41,13 @@ export function ChatScreen({
   sourceLabels = [],
   variant,
   label,
+  onSend,
+  suggestions,
+  suggestLabel = "Try a task",
+  placeholder,
 }: ChatScreenProps) {
+  const showEmpty = variant === "empty" || messages.length === 0;
+
   return (
     <div className={styles.screen} role="region" aria-label={label}>
       {/* Header */}
@@ -60,7 +74,7 @@ export function ChatScreen({
 
       {/* Body */}
       <div className={styles.body}>
-        {variant === "empty" || messages.length === 0 ? (
+        {showEmpty ? (
           <div className={styles.empty}>
             <span className={styles.emptyIcon} aria-hidden="true">
               <SparkleIcon size={22} />
@@ -89,10 +103,33 @@ export function ChatScreen({
             ))}
           </div>
         )}
+
+        {suggestions && suggestions.length > 0 && (
+          <div className={styles.suggest}>
+            <span className={styles.suggestLabel}>{suggestLabel}</span>
+            <div className={styles.suggestChips}>
+              {suggestions.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={styles.suggestChip}
+                  onClick={() => onSend?.(p.prompt)}
+                >
+                  <span
+                    className={styles.kindDot}
+                    data-kind={p.kind}
+                    aria-hidden="true"
+                  />
+                  {p.chip}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input dock */}
-      <InputBar />
+      <InputBar onSend={onSend} placeholder={placeholder} />
     </div>
   );
 }

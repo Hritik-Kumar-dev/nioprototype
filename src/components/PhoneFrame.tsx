@@ -11,6 +11,8 @@ export interface PhoneFrameProps {
   children: ReactNode;
   /** Accessible name, e.g. "With NIO phone preview". */
   label: string;
+  /** Data attribute for phone identification (e.g., "left", "center", "right"). */
+  dataPhone?: string;
   className?: string;
 }
 
@@ -18,9 +20,14 @@ export interface PhoneFrameProps {
  * Reusable dark metallic phone frame: body, side buttons, dynamic island,
  * status bar. Identical for all three phones (fair-comparison feel).
  */
-export function PhoneFrame({ children, label, className }: PhoneFrameProps) {
+export function PhoneFrame({ children, label, dataPhone, className }: PhoneFrameProps) {
   return (
-    <div className={`${styles.frame} ${className ?? ""}`} role="group" aria-label={label}>
+    <div
+      className={`${styles.frame} ${className ?? ""}`}
+      role="group"
+      aria-label={label}
+      data-phone={dataPhone}
+    >
       {/* Side buttons */}
       <span className={`${styles.sideBtn} ${styles.btnMute}`} aria-hidden="true" />
       <span className={`${styles.sideBtn} ${styles.btnVolUp}`} aria-hidden="true" />

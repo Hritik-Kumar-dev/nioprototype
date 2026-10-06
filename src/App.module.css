@@ -1,17 +1,45 @@
+/* Page shell: the dashboard is scaled to fit the viewport with no scrolling. */
 .page {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--bg);
+  padding: 12px 20px;
+}
+
+/* Fallback for narrow viewports: normal responsive, scrollable page. */
+.pageScroll {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+.fitOuter {
+  width: 100%;
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: var(--sp-8) var(--sp-6) var(--sp-16);
+  overflow: hidden;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fitted {
+  flex: 0 0 auto;
+  transform-origin: center center;
+  will-change: transform;
 }
 
 .main {
   width: 100%;
-  max-width: 1200px;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-12);
+  gap: 16px;
 }
 
 /* Reduced motion handled globally, but ensure nothing moves if prefers-reduced-motion */

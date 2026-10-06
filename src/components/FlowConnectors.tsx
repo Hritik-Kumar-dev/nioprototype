@@ -2,20 +2,25 @@ import styles from "./FlowConnectors.module.css";
 
 /**
  * Left and right connector SVGs with sharp 90° corners and arrowheads.
- * Takes explicit pixel coordinates so we can center perfectly.
+ * Coordinates are expressed in the PhoneFlow design space and scaled by the
+ * SVG viewBox so they stay aligned with the phones at every viewport width.
  */
 export function FlowConnectors({
   left,
   right,
+  viewBox = "0 0 920 600",
 }: {
   left: { xStart: number; xEnd: number; yTop: number; yBottom: number };
   right: { xStart: number; xEnd: number; yTop: number; yBottom: number };
+  viewBox?: string;
 }) {
   const arrowSize = 6;
 
   return (
     <svg
       className={styles.svg}
+      viewBox={viewBox}
+      preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label="Flow connectors from center phone to side phones"
     >
@@ -62,29 +67,30 @@ export function FlowConnectors({
 
 /**
  * Vertical "with NIO" / "without NIO" labels placed beside the vertical segments.
+ * Positioned in percentages of the stage so they scale with the layout.
  */
 export function FlowLabel({
-  x,
-  yTop,
-  yBottom,
+  leftPct,
+  topPct,
   topText,
   bottomText,
+  variant = "blue",
   className,
 }: {
-  x: number;
-  yTop: number;
-  yBottom: number;
+  leftPct: number;
+  topPct: number;
   topText: string;
   bottomText: string;
+  /** "neutral" renders the label text in the default text colour. */
+  variant?: "blue" | "neutral";
   className?: string;
 }) {
-  const midY = (yTop + yBottom) / 2 - 2;
   return (
     <div
-      className={`${styles.labelWrap} ${className ?? ""}`}
+      className={`${styles.labelWrap} ${variant === "neutral" ? styles.neutral : ""} ${className ?? ""}`}
       style={{
-        left: x,
-        top: midY,
+        left: `${leftPct}%`,
+        top: `${topPct}%`,
         transform: "translate(-50%, -50%)",
       }}
       aria-hidden="true"

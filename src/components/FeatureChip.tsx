@@ -14,10 +14,12 @@ export function FeatureChip({ name, enabled }: FeatureChipProps) {
       className={`${styles.chip} ${enabled ? styles.on : styles.off}`}
       aria-label={`${name}: ${enabled ? "on" : "off"}`}
     >
-      <span className={styles.icon} aria-hidden="true">
-        {enabled ? <CheckCircleIcon size={13} /> : <MinusCircleIcon size={13} />}
-      </span>
-      <span className={styles.name}>{name}</span>
+      <div className={styles.iconContainer}>
+        <span className={styles.icon} aria-hidden="true">
+          {enabled ? <CheckCircleIcon size={13} /> : <MinusCircleIcon size={13} />}
+        </span>
+        <span className={styles.name}>{name}</span>
+      </div>
       <span className={styles.status}>{enabled ? "ON" : "OFF"}</span>
     </div>
   );

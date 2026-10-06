@@ -18,94 +18,53 @@
 
 .phonesWrapper {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 0; /* we use absolute positioning via transform instead */
-  padding: var(--sp-12) var(--sp-4) var(--sp-16);
-  min-height: 520px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 
-/* Base phone sizing */
+/*
+ * Stage defines a fixed design coordinate system (900 x 605) that scales
+ * fluidly: children are positioned in percentages, phone frames keep their
+ * own aspect-ratio, and the connector SVG uses a matching viewBox. The phones
+ * are deliberately large relative to the stage so their content stays legible.
+ */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  aspect-ratio: 900 / 605; /* width : height of the design space */
+}
+
+/* All phones share the same width (278/900) and derive height from aspect-ratio. */
 .leftPhone,
 .centerPhone,
 .rightPhone {
-  --phone-w: 238px;
-  --phone-h: 416px;
-  width: var(--phone-w);
-  height: var(--phone-h);
-  flex-shrink: 0;
+  position: absolute;
+  width: 30.8889%; /* 278 / 900 */
 }
 
-/* Center phone: larger, positioned higher */
-.centerPhone {
-  --phone-w: 252px;
-  --phone-h: 440px;
-  z-index: 2;
-  transform: translateY(-32px);
-}
-
-/* Left phone: lower, left side */
+/* Side phones sit lower; the center phone anchors the top of the stage. */
 .leftPhone {
+  left: 1.2222%; /* 11 / 900 */
+  top: 19.5041%; /* 118 / 605 */
   z-index: 1;
-  transform: translateX(-28px) translateY(8px);
 }
 
-/* Right phone: lower, right side */
+.centerPhone {
+  left: 34.5556%; /* 311 / 900 — centered between the side phones */
+  top: 0;
+  z-index: 2;
+}
+
 .rightPhone {
+  left: 67.8889%; /* 611 / 900 */
+  top: 19.5041%; /* 118 / 605 */
   z-index: 1;
-  transform: translateX(28px) translateY(8px);
 }
 
-/* Responsive adjustments */
-@media (max-width: 1023px) {
-  .centerPhone {
-    --phone-w: 230px;
-    --phone-h: 400px;
-    transform: translateY(-24px);
-  }
-  .leftPhone,
-  .rightPhone {
-    --phone-w: 220px;
-    --phone-h: 384px;
-    transform: translateY(4px);
-  }
-  .leftPhone {
-    transform: translateX(-20px) translateY(4px);
-  }
-  .rightPhone {
-    transform: translateX(20px) translateY(4px);
-  }
-}
-
-/* Mobile: single column stack (handled in App.tsx via media query switching rendering mode) */
-@media (max-width: 639px) {
-  .phonesWrapper {
-    flex-direction: column;
-    align-items: center;
-    min-height: auto;
-    padding: var(--sp-8) var(--sp-4);
-  }
-  .centerPhone,
-  .leftPhone,
-  .rightPhone {
-    transform: none !important;
-    width: 100%;
-    max-width: 320px;
-    margin-bottom: var(--sp-12);
-  }
-  .centerPhone {
-    --phone-w: 100%;
-    --phone-h: 400px;
-  }
-  .leftPhone,
-  .rightPhone {
-    --phone-w: 100%;
-    --phone-h: 384px;
-  }
-}
-
-/* Connectors — coordinate system is set in JS based on measured positions. */
+/* Connector/label accents */
 .withLabel,
 .withoutLabel {
   pointer-events: none;
