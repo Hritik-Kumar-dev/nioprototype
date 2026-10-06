@@ -1,0 +1,54 @@
+.chip {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: var(--radius-chip);
+  border: 1px solid var(--border-soft);
+  background: var(--panel-2);
+}
+
+.on {
+  border-color: rgba(32, 201, 151, 0.35);
+}
+
+.off {
+  border-color: var(--border-soft);
+}
+
+.icon {
+  display: inline-flex;
+}
+
+.on .icon {
+  color: var(--green);
+}
+
+.off .icon {
+  color: var(--text-muted);
+}
+
+.name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+  line-height: 1.2;
+}
+
+.status {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.on .status {
+  color: var(--green);
+}
+
+.off .status {
+  color: var(--text-muted);
+}

@@ -1,0 +1,91 @@
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 240 / 420;
+  background: linear-gradient(180deg, #1b232e 0%, #10161f 55%, #161d28 100%);
+  border: 1px solid #2c3a4c;
+  border-radius: 44px;
+  padding: 9px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 0 0 2px #05080c,
+    0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Side buttons */
+.sideBtn {
+  position: absolute;
+  width: 3px;
+  border-radius: 2px;
+  background: #31405289;
+  border: 1px solid #3a4a5e;
+}
+
+.btnMute {
+  left: -3px;
+  top: 19%;
+  height: 3.2%;
+}
+
+.btnVolUp {
+  left: -3px;
+  top: 26%;
+  height: 5.5%;
+}
+
+.btnVolDown {
+  left: -3px;
+  top: 33.5%;
+  height: 5.5%;
+}
+
+.btnPower {
+  right: -3px;
+  top: 28%;
+  height: 9%;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-screen);
+  background: #0a0f16;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.statusBar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px 4px;
+  color: var(--text);
+}
+
+.time {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.island {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26%;
+  height: 15px;
+  border-radius: 999px;
+  background: #04070b;
+}
+
+.statusIcons {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text);
+}

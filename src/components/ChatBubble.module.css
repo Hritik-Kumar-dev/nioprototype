@@ -1,0 +1,65 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.userRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.assistantRow {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.bubble {
+  max-width: 86%;
+  border-radius: 11px;
+  padding: 7px 9px;
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+.user {
+  background: #0f4fb5;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant {
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  color: var(--text-2);
+  border-bottom-left-radius: 4px;
+}
+
+.assistantRow .bubble {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(21, 156, 255, 0.16);
+  color: var(--blue);
+  margin-top: 2px;
+}
+
+.para {
+  margin: 0;
+}
+
+.para + .para {
+  margin-top: 6px;
+}

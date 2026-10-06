@@ -1,0 +1,130 @@
+.section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.phonesWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0; /* we use absolute positioning via transform instead */
+  padding: var(--sp-12) var(--sp-4) var(--sp-16);
+  min-height: 520px;
+}
+
+/* Base phone sizing */
+.leftPhone,
+.centerPhone,
+.rightPhone {
+  --phone-w: 238px;
+  --phone-h: 416px;
+  width: var(--phone-w);
+  height: var(--phone-h);
+  flex-shrink: 0;
+}
+
+/* Center phone: larger, positioned higher */
+.centerPhone {
+  --phone-w: 252px;
+  --phone-h: 440px;
+  z-index: 2;
+  transform: translateY(-32px);
+}
+
+/* Left phone: lower, left side */
+.leftPhone {
+  z-index: 1;
+  transform: translateX(-28px) translateY(8px);
+}
+
+/* Right phone: lower, right side */
+.rightPhone {
+  z-index: 1;
+  transform: translateX(28px) translateY(8px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1023px) {
+  .centerPhone {
+    --phone-w: 230px;
+    --phone-h: 400px;
+    transform: translateY(-24px);
+  }
+  .leftPhone,
+  .rightPhone {
+    --phone-w: 220px;
+    --phone-h: 384px;
+    transform: translateY(4px);
+  }
+  .leftPhone {
+    transform: translateX(-20px) translateY(4px);
+  }
+  .rightPhone {
+    transform: translateX(20px) translateY(4px);
+  }
+}
+
+/* Mobile: single column stack (handled in App.tsx via media query switching rendering mode) */
+@media (max-width: 639px) {
+  .phonesWrapper {
+    flex-direction: column;
+    align-items: center;
+    min-height: auto;
+    padding: var(--sp-8) var(--sp-4);
+  }
+  .centerPhone,
+  .leftPhone,
+  .rightPhone {
+    transform: none !important;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: var(--sp-12);
+  }
+  .centerPhone {
+    --phone-w: 100%;
+    --phone-h: 400px;
+  }
+  .leftPhone,
+  .rightPhone {
+    --phone-w: 100%;
+    --phone-h: 384px;
+  }
+}
+
+/* Connectors — coordinate system is set in JS based on measured positions. */
+.withLabel,
+.withoutLabel {
+  pointer-events: none;
+}
+
+/* Subtle pulse on connectors (CSS-only, respects reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .svg path:first-of-type,
+  .svg path:nth-of-type(2) {
+    animation: flow-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes flow-pulse {
+    0%,
+    100% {
+      stroke-opacity: 0.55;
+    }
+    50% {
+      stroke-opacity: 0.95;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+.wrap {
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+}
+
+.tickLabel {
+  font-family: var(--font);
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.line {
+  filter: drop-shadow(0 0 3px rgba(22, 199, 255, 0.5));
+}
+
+.point {
+  fill: var(--cyan);
+  stroke: var(--panel);
+  stroke-width: 1;
+}
+
+.area {
+  opacity: 0.06;
+}
