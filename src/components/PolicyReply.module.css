@@ -1,0 +1,80 @@
+.title {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 540px;
+  height: auto;
+  margin-top: 10px;
+}
+
+.name,
+.value,
+.good {
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.name {
+  fill: var(--ink-2);
+}
+
+.name[data-nio="true"] {
+  fill: var(--ink);
+  font-weight: 560;
+}
+
+.value[data-rank="best"] {
+  fill: var(--ok);
+  font-weight: 560;
+}
+
+.value[data-rank="worst"] {
+  fill: var(--bad);
+  font-weight: 560;
+}
+
+.value {
+  fill: var(--ink-2);
+  transition: opacity 500ms var(--ease);
+}
+
+.good {
+  fill: var(--muted);
+  transition: opacity 500ms var(--ease);
+}
+
+.bar {
+  fill: var(--muted);
+  transition: width 1700ms var(--ease);
+}
+
+.bar[data-rank="best"] {
+  fill: var(--ok);
+}
+
+.bar[data-rank="worst"] {
+  fill: var(--bad);
+}
+
+.bar[data-rank="mid"] {
+  fill: var(--ink-2);
+  opacity: 0.55;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}

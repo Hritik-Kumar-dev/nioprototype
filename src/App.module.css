@@ -1,54 +1,129 @@
-/* Page shell: the dashboard is scaled to fit the viewport with no scrolling. */
-.page {
-  height: 100vh;
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 100dvh;
-  overflow: hidden;
-  background: var(--bg);
-  padding: 12px 20px;
 }
 
-/* Fallback for narrow viewports: normal responsive, scrollable page. */
-.pageScroll {
-  height: auto;
-  min-height: 100vh;
-  overflow: visible;
+.bar {
+  padding: 0 var(--gutter);
 }
 
-.fitOuter {
-  width: 100%;
-  height: 100%;
+.barInner {
+  max-width: var(--col);
+  margin: 0 auto;
+  height: 52px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
 }
 
-.inner {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+.brand {
+  display: inline-flex;
+  color: var(--ink);
 }
 
-.fitted {
-  flex: 0 0 auto;
-  transform-origin: center center;
-  will-change: transform;
-}
-
-.main {
-  width: 100%;
+.actions {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* Reduced motion handled globally, but ensure nothing moves if prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+.link {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: color 160ms ease;
+}
+
+.link:hover {
+  color: var(--ink);
+}
+
+.link span[data-on="false"] {
+  color: var(--muted);
+}
+
+.link span[data-on="true"] {
+  color: var(--ink);
+}
+
+.sep {
+  margin: 0 6px;
+  color: var(--muted);
+}
+
+.thread {
+  overflow-y: auto;
+  padding: 0 var(--gutter);
+  scrollbar-width: none;
+}
+
+.thread::-webkit-scrollbar {
+  display: none;
+}
+
+.column {
+  max-width: var(--col);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 36px 0 40px;
+}
+
+.turn {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 26px 0;
+  border-top: 1px solid var(--rule);
+  animation: rise 600ms var(--ease) both;
+}
+
+.turn:first-child {
+  border-top: 0;
+}
+
+.turn[data-who="nio"] {
+  animation-delay: 160ms;
+}
+
+.who {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.who svg {
+  display: block;
+  color: var(--ink);
+}
+
+.body {
+  min-width: 0;
+}
+
+.userText {
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 560px) {
+  .turn {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }

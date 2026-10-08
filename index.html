@@ -3,12 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <meta
-      name="description"
-      content="NIO — AI Orchestration Comparison dashboard (demo UI with placeholder data)"
-    />
-    <title>NIO — AI Orchestration Comparison</title>
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="NIO routes every prompt to the right model. A simulated demo." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      try {
+        if (localStorage.getItem("nio-theme") === "dark") document.documentElement.dataset.theme = "dark";
+      } catch (e) {}
+    </script>
+    <title>NIO</title>
   </head>
   <body>
     <div id="root"></div>

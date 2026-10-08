@@ -1,0 +1,206 @@
+.title {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.live {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.live div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.live span {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.live b {
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: color 300ms ease;
+}
+
+.live b[data-tone="bad"] {
+  color: var(--bad);
+}
+
+.live b[data-tone="ok"] {
+  color: var(--ok);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  height: auto;
+  margin-top: 14px;
+  overflow: visible;
+}
+
+.cap,
+.tick,
+.noteBad,
+.noteOk {
+  font-family: var(--font);
+}
+
+.cap {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  fill: var(--muted);
+}
+
+.tick {
+  font-size: 10px;
+  fill: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.band {
+  fill: var(--bad);
+  opacity: 0.06;
+}
+
+/* Everything inside the clip is revealed left to right in step with the scan line. */
+.reveal {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: reveal var(--dur) linear forwards;
+}
+
+@keyframes reveal {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.trafficArea {
+  fill: var(--ink);
+  opacity: 0.07;
+}
+
+.trafficLine {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.badArea {
+  fill: var(--bad);
+  opacity: 0.12;
+}
+
+.badLine {
+  fill: none;
+  stroke: var(--bad);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.okLine {
+  fill: none;
+  stroke: var(--ok);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.drop {
+  fill: var(--bad);
+}
+
+.bar {
+  fill: var(--muted);
+  transition: fill 300ms ease;
+}
+
+.bar[data-scaled="true"] {
+  fill: var(--ok);
+}
+
+.scan {
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.3;
+  animation: sweep var(--dur) linear forwards;
+}
+
+@keyframes sweep {
+  to {
+    transform: translateX(var(--sweep));
+    opacity: 0;
+  }
+}
+
+.note {
+  opacity: 0;
+  animation: show 900ms var(--ease) forwards;
+  animation-delay: var(--at);
+}
+
+@keyframes show {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.noteBad,
+.noteOk {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.noteBad {
+  fill: var(--bad);
+}
+
+.noteOk {
+  fill: var(--ok);
+}
+
+.leaderBad {
+  stroke: var(--bad);
+  stroke-width: 1;
+}
+
+@media (max-width: 560px) {
+  .live {
+    grid-template-columns: 1fr 1fr;
+  }
+}

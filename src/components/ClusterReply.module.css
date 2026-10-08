@@ -1,0 +1,407 @@
+.title {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend i[data-k="ok"] {
+  background: var(--ok);
+}
+
+.legend i[data-k="fail"] {
+  background: var(--bad);
+}
+
+.legend i[data-k="retry"] {
+  background: var(--warn);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  height: auto;
+  margin-top: 14px;
+  overflow: visible;
+}
+
+.cap,
+.lbText,
+.podName,
+.podState,
+.statusTitle,
+.statusSub,
+.cross {
+  font-family: var(--font);
+}
+
+.cap {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  fill: var(--muted);
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+}
+
+.lb {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+}
+
+.lb[data-nio="true"] {
+  stroke: var(--ok);
+  stroke-width: 1.4;
+}
+
+.lbText {
+  font-size: 11px;
+  fill: var(--ink-2);
+}
+
+.lbText[data-nio="true"] {
+  fill: var(--ok);
+  font-weight: 560;
+}
+
+.status {
+  animation: fade 400ms var(--ease) both;
+}
+
+.statusTitle {
+  font-size: 11.5px;
+  font-weight: 560;
+}
+
+.statusSub {
+  font-size: 10px;
+  fill: var(--ink-2);
+}
+
+.divider {
+  stroke: var(--rule);
+  stroke-dasharray: 2 4;
+}
+
+.status[data-tone="bad"] {
+  fill: var(--bad);
+  color: var(--bad);
+}
+
+.status[data-tone="warn"] {
+  fill: var(--warn);
+  color: var(--warn);
+}
+
+.status[data-tone="ok"] {
+  fill: var(--ok);
+  color: var(--ok);
+}
+
+.status circle {
+  fill: currentColor;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.route {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  transition:
+    stroke 300ms ease,
+    opacity 300ms ease;
+}
+
+.route[data-bad="true"] {
+  stroke: var(--bad);
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+
+.route[data-cut="true"] {
+  opacity: 0.15;
+  stroke-dasharray: 2 4;
+}
+
+.podBox {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  transition:
+    stroke 300ms ease,
+    fill 300ms ease;
+}
+
+.podDot {
+  fill: var(--ok);
+  transition: fill 300ms ease;
+}
+
+.podName {
+  font-size: 10.5px;
+  fill: var(--ink);
+}
+
+.podState {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  fill: var(--ok);
+}
+
+.hatchBad {
+  stroke: var(--bad);
+  stroke-width: 1;
+  opacity: 0.28;
+}
+
+.hatchWarn {
+  stroke: var(--warn);
+  stroke-width: 1;
+  opacity: 0.3;
+}
+
+.pod[data-view="down"] .podBox {
+  stroke: var(--bad);
+  stroke-width: 1.4;
+}
+
+.pod[data-view="down"] .podDot,
+.pod[data-view="down"] .podState {
+  fill: var(--bad);
+}
+
+.pod[data-view="down"] .podName {
+  fill: var(--muted);
+}
+
+.pod[data-view="draining"] .podBox {
+  stroke: var(--warn);
+  stroke-width: 1.4;
+}
+
+.pod[data-view="draining"] .podDot,
+.pod[data-view="draining"] .podState {
+  fill: var(--warn);
+}
+
+.pod[data-view="starting"] .podBox {
+  stroke: var(--warn);
+  stroke-width: 1.4;
+  stroke-dasharray: 4 4;
+  animation: march 1200ms linear infinite;
+}
+
+.pod[data-view="starting"] .podDot,
+.pod[data-view="starting"] .podState {
+  fill: var(--warn);
+}
+
+.pod[data-view="starting"] .podDot {
+  animation: blink 700ms ease-in-out infinite;
+}
+
+@keyframes march {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* A request flies from the balancer to a pod. Colour says what happened to it. */
+.packet {
+  opacity: 0;
+  animation: fly 1100ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.packet[data-kind="ok"] {
+  fill: var(--ok);
+}
+
+.packet[data-kind="fail"] {
+  fill: var(--bad);
+  animation-name: fly-fail;
+  animation-duration: 1500ms;
+}
+
+.packet[data-kind="retry"] {
+  fill: var(--warn);
+  animation-name: fly-retry;
+  animation-duration: 1500ms;
+}
+
+.packet[data-late="true"] {
+  animation-delay: 1500ms;
+  animation-duration: 1100ms;
+  animation-name: fly;
+}
+
+@keyframes fly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+@keyframes fly-fail {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  12% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+    transform: translate(var(--dx), var(--dy)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(2.6);
+  }
+}
+
+@keyframes fly-retry {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+    transform: translate(var(--dx), var(--dy));
+  }
+  90% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+.cross {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--bad);
+  opacity: 0;
+  animation: pop 1400ms ease both;
+  animation-delay: 700ms;
+}
+
+@keyframes pop {
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.log {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+  color: var(--ink-2);
+  animation: rise 400ms var(--ease) both;
+}
+
+.log i {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  align-self: center;
+}
+
+.log[data-tone="bad"] i {
+  background: var(--bad);
+}
+
+.log[data-tone="warn"] i {
+  background: var(--warn);
+}
+
+.log[data-tone="good"] i {
+  background: var(--ok);
+}
+
+.log[data-tone="bad"] {
+  color: var(--bad);
+}
+
+.log[data-tone="warn"] {
+  color: var(--warn);
+}
+
+.log[data-tone="good"] {
+  color: var(--ok);
+}
+
+.log span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
