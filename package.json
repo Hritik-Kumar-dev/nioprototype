@@ -9,16 +9,22 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "tokens:install": "cd tokenizer && bun install",
+    "tokens": "cd tokenizer && bun run start",
+    "tokens:test": "cd tokenizer && bun run test",
+    "tokens:typecheck": "cd tokenizer && bun run typecheck"
   },
   "dependencies": {
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@openrouter/sdk": "^1.5.117",
     "cuelume": "^0.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/node": "^26.6.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",

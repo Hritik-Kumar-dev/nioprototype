@@ -211,6 +211,7 @@
 
 .answer {
   margin-top: 26px;
+  white-space: pre-wrap;
   font-size: 15px;
   line-height: 1.7;
   letter-spacing: -0.01em;

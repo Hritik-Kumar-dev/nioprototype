@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { answerFor } from "../answers";
-import { usePhases, useTyped } from "../hooks";
-import type { Routing } from "../sim/classify";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePhases } from "../hooks";
+import { useAnswer, useRating } from "../llm";
+import type { Rating } from "../rating";
+import { routePrompt, type Routing } from "../sim/classify";
 import { count, percent, reduction, seconds, usd } from "../sim/format";
 import { sound } from "../sound";
 import { TIER_LABEL, TIERS } from "../sim/workers";
@@ -18,16 +19,9 @@ const WHEEL_CYCLES = 3;
 /** Times, in ms after mount, at which each stage starts. */
 const STAGES = [500, 2400, 3900, 5200] as const;
 
-export function RouteReply({ routing }: { routing: Routing }) {
-  const phase = usePhases(STAGES);
-  const [open, setOpen] = useState(true);
-  const { classification: c, chosen } = routing;
-
-  const answer = answerFor(routing.prompt, c.tier);
-  const typed = useTyped(answer, phase >= 4, 55);
-  const rated = phase >= 1;
-  const fanned = phase >= 2;
-  const picked = phase >= 3;
+/** Asks the router model for a tier, then shows the routing trace and the streamed answer. */
+export function RouteReply({ prompt }: { prompt: string }) {
+  const rating = useRating(prompt);
 
   const played = useRef(false);
   useEffect(() => {
@@ -36,13 +30,46 @@ export function RouteReply({ routing }: { routing: Routing }) {
     sound.play("loading");
   }, []);
 
+  if (rating.status === "rated") return <Routed prompt={prompt} rating={rating.rating} />;
+
+  return (
+    <div>
+      <div className={styles.traceHead}>
+        <span className={styles.headLabel}>routing</span>
+        <span className={styles.status} data-live={rating.status === "rating"}>
+          <i className={styles.pulse} aria-hidden="true" />
+          {rating.status === "rating" ? "reading prompt" : "router unavailable"}
+        </span>
+      </div>
+      {rating.status === "failed" && (
+        <p className={styles.answer} role="alert">
+          Could not rate this prompt, so nothing was sent to a worker. {rating.message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function Routed({ prompt, rating }: { prompt: string; rating: Rating }) {
+  const routing = useMemo(() => routePrompt(prompt, rating), [prompt, rating]);
+  const phase = usePhases(STAGES);
+  const [open, setOpen] = useState(true);
+  const { classification: c, chosen } = routing;
+
+  const answer = useAnswer(prompt, c.tier);
+  const rated = phase >= 1;
+  const fanned = phase >= 2;
+  const picked = phase >= 3;
+  const answering = phase >= 4;
+  const finished = answering && answer.status === "done";
+
   useEffect(() => {
     if (picked) sound.play("select");
   }, [picked]);
 
   useEffect(() => {
-    if (typed.done) sound.play("ready", { emphasis: "strong" });
-  }, [typed.done]);
+    if (finished) sound.play("ready", { emphasis: "strong" });
+  }, [finished]);
 
   const landing = TIERS.indexOf(c.tier);
   const wheelWords = Array.from({ length: WHEEL_CYCLES * TIERS.length + TIERS.length }, (_, i) => TIERS[i % TIERS.length]);
@@ -156,12 +183,17 @@ export function RouteReply({ routing }: { routing: Routing }) {
         </div>
       </div>
 
-      <p className={styles.answer} style={{ opacity: phase >= 4 ? 1 : 0 }}>
-        {typed.shown}
-        {!typed.done && phase >= 4 && <span className={styles.caret} />}
+      <p className={styles.answer} style={{ opacity: answering ? 1 : 0 }}>
+        {answering && answer.text}
+        {answering && answer.status === "streaming" && <span className={styles.caret} />}
       </p>
+      {answering && answer.status === "failed" && (
+        <p className={styles.answer} role="alert">
+          {chosen.worker.model} stopped before finishing. {answer.message}
+        </p>
+      )}
 
-      <Stats routing={routing} show={typed.done} />
+      <Stats routing={routing} show={finished} />
     </div>
   );
 }

@@ -18,30 +18,6 @@ export function usePhases(times: readonly number[]) {
   return phase;
 }
 
-/** Reveals `text` one character at a time once `active` is true. */
-export function useTyped(text: string, active: boolean, charsPerSecond = 80) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!active) return;
-    if (prefersReducedMotion()) {
-      setCount(text.length);
-      return;
-    }
-    const start = performance.now();
-    let raf = 0;
-    const step = (now: number) => {
-      const next = Math.min(text.length, Math.max(0, Math.floor(((now - start) / 1000) * charsPerSecond)));
-      setCount(next);
-      if (next < text.length) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [active, text, charsPerSecond]);
-
-  return { shown: text.slice(0, count), done: active && count >= text.length };
-}
-
 /** Eases from 0 to `target` over `ms` once `active` is true. */
 export function useCountUp(target: number, active: boolean, ms = 900) {
   const [value, setValue] = useState(0);

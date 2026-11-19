@@ -6,7 +6,6 @@ import { Empty } from "./components/Empty";
 import { PolicyReply } from "./components/PolicyReply";
 import { RouteReply } from "./components/RouteReply";
 import { findCommand, type RunKind } from "./commands";
-import { routePrompt, type Routing } from "./sim/classify";
 import { startSound } from "./sound";
 import styles from "./App.module.css";
 
@@ -22,7 +21,7 @@ function readTheme(): Theme {
 
 type Message =
   | { id: number; kind: "user"; text: string }
-  | { id: number; kind: "route"; routing: Routing }
+  | { id: number; kind: "route"; prompt: string }
   | { id: number; kind: "run"; run: RunKind };
 
 function RunReply({ run }: { run: RunKind }) {
@@ -114,7 +113,7 @@ export default function App() {
       setMessages((m) => [
         ...m,
         { id: userId, kind: "user", text },
-        command ? { id: replyId, kind: "run", run: command.id } : { id: replyId, kind: "route", routing: routePrompt(text) },
+        command ? { id: replyId, kind: "run", run: command.id } : { id: replyId, kind: "route", prompt: text },
       ]);
     },
     [pin],
@@ -160,7 +159,7 @@ export default function App() {
                 </Turn>
               ) : (
                 <Turn key={m.id} who="NIO">
-                  {m.kind === "route" ? <RouteReply routing={m.routing} /> : <RunReply run={m.run} />}
+                  {m.kind === "route" ? <RouteReply prompt={m.prompt} /> : <RunReply run={m.run} />}
                 </Turn>
               ),
             )

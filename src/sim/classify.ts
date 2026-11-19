@@ -1,3 +1,4 @@
+import type { Rating } from "../rating";
 import { hashString } from "./rng";
 import { costUsd, FRONTIER, latencyMs, workers, type Tier, type Worker } from "./workers";
 
@@ -47,7 +48,8 @@ const OUTPUT_RANGE: Record<Tier, readonly [number, number]> = {
   hard: [900, 1700],
 };
 
-export function classifyPrompt(prompt: string): Classification {
+/** `rating`, when given, comes from the router model and overrides the heuristic tier and confidence. */
+export function classifyPrompt(prompt: string, rating?: Rating): Classification {
   const text = prompt.trim();
   const words = text.split(/\s+/).filter(Boolean).length;
   const signals: Signal[] = [];
@@ -99,11 +101,11 @@ export function classifyPrompt(prompt: string): Classification {
     0,
     100,
   );
-  const tier = tierOf(score);
+  const tier = rating?.tier ?? tierOf(score);
   const boundaryGap = Math.min(
     ...[MEDIUM_FROM, HARD_FROM].map((edge) => Math.abs(score - edge)),
   );
-  const confidence = clamp(0.58 + boundaryGap / 45, 0.58, 0.97);
+  const confidence = rating?.confidence ?? clamp(0.58 + boundaryGap / 45, 0.58, 0.97);
 
   const [lo, hi] = OUTPUT_RANGE[tier];
   const jitter = (hashString(text) % 1000) / 1000;
@@ -159,8 +161,8 @@ function outcomeFor(worker: Worker, tier: Tier, inputTokens: number, outputToken
   };
 }
 
-export function routePrompt(prompt: string): Routing {
-  const classification = classifyPrompt(prompt);
+export function routePrompt(prompt: string, rating?: Rating): Routing {
+  const classification = classifyPrompt(prompt, rating);
   const { tier } = classification;
   const inTokens = Math.round(classification.inputTokens * INPUT_KEEP[tier]);
   const outTokens = Math.round(classification.outputTokens * OUTPUT_KEEP[tier]);
