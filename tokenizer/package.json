@@ -1,0 +1,22 @@
+{
+  "name": "tokenizer",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@huggingface/tokenizers": "^0.2.0",
+    "ai-tokenizer": "^1.0.7",
+    "better-result": "^3.0.1"
+  },
+  "scripts": {
+    "start": "bun index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  }
+}
