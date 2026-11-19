@@ -5,13 +5,13 @@ import type { Rating } from "../rating";
 import { routePrompt, type Routing } from "../sim/classify";
 import { count, percent, reduction, seconds, usd } from "../sim/format";
 import { sound } from "../sound";
-import { TIER_LABEL, TIERS } from "../sim/workers";
+import { ACCESS_LABEL, QUALITY_FLOOR, TIER_LABEL, TIERS } from "../sim/workers";
 import { CountUp } from "./CountUp";
 import { StatTable } from "./StatTable";
 import styles from "./RouteReply.module.css";
 
-const ROW_Y = [26, 72, 118, 164] as const;
-const RATER = { x: 196, y: 95 };
+const ROW_Y = [22, 68, 114, 160, 206, 252] as const;
+const RATER = { x: 196, y: 137 };
 const WORKER_X = 372;
 const WHEEL_ROW = 18;
 const WHEEL_CYCLES = 3;
@@ -96,7 +96,7 @@ function Routed({ prompt, rating }: { prompt: string; rating: Rating }) {
 
       <div className={styles.collapse} data-open={open}>
         <div className={styles.inner}>
-          <svg className={styles.svg} viewBox="0 0 640 190" role="img" aria-label={`Prompt rated ${c.tier}, routed to ${chosen.worker.model}`}>
+          <svg className={styles.svg} viewBox="0 0 640 282" role="img" aria-label={`Prompt rated ${c.tier}, routed to ${chosen.worker.model}`}>
             <defs>
               <clipPath id={`wheel-${routing.prompt.length}-${c.score}`}>
                 <rect x={RATER.x - 60} y={RATER.y + 14} width="120" height={WHEEL_ROW} />
@@ -141,7 +141,7 @@ function Routed({ prompt, rating }: { prompt: string; rating: Rating }) {
             {routing.candidates.map((cand, i) => {
               const y = ROW_Y[i];
               const isChosen = cand.chosen;
-              const weak = cand.quality < 0.85;
+              const weak = cand.quality < QUALITY_FLOOR[c.tier];
               const d = `M${RATER.x + 5} ${RATER.y} C ${RATER.x + 90} ${RATER.y}, ${WORKER_X - 90} ${y}, ${WORKER_X - 6} ${y}`;
               return (
                 <g key={cand.worker.id}>
@@ -178,7 +178,7 @@ function Routed({ prompt, rating }: { prompt: string; rating: Rating }) {
           </svg>
 
           <p className={styles.caption} style={{ opacity: picked ? 1 : 0 }}>
-            rated {c.tier} · routed to {chosen.worker.model} ({chosen.worker.host})
+            rated {c.tier} · routed to {chosen.worker.model} ({chosen.worker.vendor}, {ACCESS_LABEL[chosen.worker.access]})
           </p>
         </div>
       </div>

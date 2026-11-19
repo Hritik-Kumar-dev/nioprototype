@@ -3,6 +3,7 @@ import { runBurst } from "./burst";
 import { classifyPrompt, EXAMPLE_PROMPTS, routePrompt } from "./classify";
 import { crashNode, createCluster, killPod, startRollout, tick, type Cluster } from "./cluster";
 import { runAllPolicies, runPolicy } from "./policies";
+import { QUALITY_FLOOR } from "./workers";
 
 describe("classifyPrompt", () => {
   it("rates each example prompt at its own tier", () => {
@@ -17,9 +18,10 @@ describe("classifyPrompt", () => {
 });
 
 describe("routePrompt", () => {
-  it("sends easy prompts to the cheapest pool and hard prompts to an API model", () => {
-    expect(routePrompt(EXAMPLE_PROMPTS.easy).chosen.worker.id).toBe("edge-8b");
-    expect(routePrompt(EXAMPLE_PROMPTS.hard).chosen.worker.host).toBe("provider");
+  it("sends each example to its tiered worker", () => {
+    expect(routePrompt(EXAMPLE_PROMPTS.easy).chosen.worker.model).toBe("GLM-5.3");
+    expect(routePrompt(EXAMPLE_PROMPTS.medium).chosen.worker.model).toBe("GPT-6 Luna");
+    expect(routePrompt(EXAMPLE_PROMPTS.hard).chosen.worker.model).toBe("GPT-6.1 Sol");
   });
 
   it("costs less than the frontier model for every example", () => {
@@ -29,9 +31,10 @@ describe("routePrompt", () => {
     }
   });
 
-  it("only picks workers that clear the quality floor", () => {
+  it("only picks workers that clear the quality floor for the tier", () => {
     for (const prompt of Object.values(EXAMPLE_PROMPTS)) {
-      expect(routePrompt(prompt).chosen.quality).toBeGreaterThanOrEqual(0.85);
+      const { chosen, classification } = routePrompt(prompt);
+      expect(chosen.quality).toBeGreaterThanOrEqual(QUALITY_FLOOR[classification.tier]);
     }
   });
 });

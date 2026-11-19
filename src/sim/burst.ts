@@ -1,5 +1,6 @@
+import { workerFor } from "./classify";
 import { createRng, weightedPercentile } from "./rng";
-import { costUsd, FRONTIER, workers, type Tier } from "./workers";
+import { costUsd, FRONTIER, type Tier, type Worker } from "./workers";
 
 export type Scenario = "steady" | "burst" | "surge";
 
@@ -89,11 +90,11 @@ export function runBurst(scenario: Scenario, seed = 7): BurstResult {
   let peakReplicas = 1;
   let withCost = 0;
 
-  const tierWorker = {
-    easy: workers[0],
-    medium: workers[1],
-    hard: workers[2],
-  } as const;
+  const tierWorker: Record<Tier, Worker> = {
+    easy: workerFor("easy"),
+    medium: workerFor("medium"),
+    hard: workerFor("hard"),
+  };
   const directCost = costUsd(FRONTIER, DIRECT_TOKENS.input, DIRECT_TOKENS.output);
   const tierCost = {
     easy: costUsd(tierWorker.easy, DIRECT_TOKENS.input * 0.55, DIRECT_TOKENS.output * 0.7),

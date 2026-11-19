@@ -1,6 +1,6 @@
 import type { Rating } from "../rating";
 import { hashString } from "./rng";
-import { costUsd, FRONTIER, latencyMs, workers, type Tier, type Worker } from "./workers";
+import { costUsd, FRONTIER, latencyMs, QUALITY_FLOOR, workers, type Tier, type Worker } from "./workers";
 
 export type Signal = {
   id: string;
@@ -129,8 +129,45 @@ export type Candidate = {
 const INPUT_KEEP: Record<Tier, number> = { easy: 0.55, medium: 0.7, hard: 0.85 };
 /** Routed workers answer more tightly than the frontier model's default verbosity. */
 const OUTPUT_KEEP: Record<Tier, number> = { easy: 0.7, medium: 0.85, hard: 0.95 };
-/** Quality below this is not good enough to answer the prompt. */
-const QUALITY_FLOOR = 0.85;
+
+const TIER_ORDER: Record<Tier, number> = { easy: 0, medium: 1, hard: 2 };
+
+/** Workers that clear this difficulty's quality bar, cheapest and fastest first. */
+function rankedWorkers(tier: Tier, inTokens: number, outTokens: number): Candidate[] {
+  const floor = QUALITY_FLOOR[tier];
+  const scored = workers.map((worker) => {
+    const quality = worker.quality[tier];
+    const cost = costUsd(worker, inTokens, outTokens);
+    const latency = latencyMs(worker, outTokens);
+    const qualified = quality >= floor;
+    // Qualified workers always outrank unqualified ones. Among them, cheaper and faster wins.
+    const value = 1 / (1 + cost * 4000 + latency / 900);
+    return { worker, quality, costUsd: cost, latencyMs: latency, qualified, fit: qualified ? 0.2 + 0.8 * value : 0.2 * value };
+  });
+
+  // Ties in fit are broken by quality, then by how close the worker is to the difficulty.
+  scored.sort(
+    (a, b) =>
+      Number(b.qualified) - Number(a.qualified) ||
+      b.fit - a.fit ||
+      b.quality - a.quality ||
+      TIER_ORDER[a.worker.tier] - TIER_ORDER[b.worker.tier],
+  );
+  return scored.map((c, i) => ({
+    worker: c.worker,
+    fit: c.fit,
+    costUsd: c.costUsd,
+    latencyMs: c.latencyMs,
+    quality: c.quality,
+    chosen: i === 0,
+  }));
+}
+
+/** The worker that serves `tier` at the example token volume, for screens that skip the prompt. */
+export function workerFor(tier: Tier): Worker {
+  const ranked = rankedWorkers(tier, 600, 900);
+  return (ranked.find((c) => c.chosen) ?? ranked[0]).worker;
+}
 
 export type Routing = {
   prompt: string;
@@ -167,24 +204,18 @@ export function routePrompt(prompt: string, rating?: Rating): Routing {
   const inTokens = Math.round(classification.inputTokens * INPUT_KEEP[tier]);
   const outTokens = Math.round(classification.outputTokens * OUTPUT_KEEP[tier]);
 
-  const scored = workers.map((worker) => {
-    const quality = worker.quality[tier];
-    const cost = costUsd(worker, inTokens, outTokens);
-    const latency = latencyMs(worker, outTokens);
-    const qualified = quality >= QUALITY_FLOOR;
-    // Qualified workers always outrank unqualified ones. Among them, cheaper and faster wins.
-    const value = 1 / (1 + cost * 4000 + latency / 900);
-    return { worker, quality, costUsd: cost, latencyMs: latency, fit: qualified ? 0.2 + 0.8 * value : 0.2 * value };
-  });
-
-  const best = scored.reduce((a, b) => (b.fit > a.fit ? b : a));
-  const candidates = scored.map((c) => ({ ...c, chosen: c.worker.id === best.worker.id }));
+  const scored = rankedWorkers(tier, inTokens, outTokens);
+  const candidates = scored;
   const chosen = candidates.find((c) => c.chosen) ?? candidates[0];
+  // Re-rank candidates for display in the order workers are listed, keeping the verdict.
+  const display = candidates
+    .map((c) => ({ ...c, chosen: c.worker.id === chosen.worker.id }))
+    .sort((a, b) => workers.findIndex((w) => w.id === a.worker.id) - workers.findIndex((w) => w.id === b.worker.id));
 
   return {
     prompt: prompt.trim(),
     classification,
-    candidates,
+    candidates: display,
     chosen,
     without: outcomeFor(FRONTIER, tier, classification.inputTokens, classification.outputTokens),
     with: outcomeFor(chosen.worker, tier, inTokens, outTokens),

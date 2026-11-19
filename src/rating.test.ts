@@ -21,9 +21,9 @@ describe("Rating.fromModelText", () => {
 describe("routePrompt with a router rating", () => {
   it("routes each tier to its own worker", () => {
     const prompt = "hello";
-    expect(routePrompt(prompt, { tier: "easy", confidence: 0.9 }).chosen.worker.id).toBe("edge-8b");
-    expect(routePrompt(prompt, { tier: "medium", confidence: 0.9 }).chosen.worker.id).toBe("mid-70b");
-    expect(routePrompt(prompt, { tier: "hard", confidence: 0.9 }).chosen.worker.id).toBe("sonnet");
+    expect(routePrompt(prompt, { tier: "easy", confidence: 0.9 }).chosen.worker.id).toBe("glm-5.3");
+    expect(routePrompt(prompt, { tier: "medium", confidence: 0.9 }).chosen.worker.id).toBe("luna-6");
+    expect(routePrompt(prompt, { tier: "hard", confidence: 0.9 }).chosen.worker.id).toBe("sol-6.1");
   });
 
   it("uses the router's confidence", () => {

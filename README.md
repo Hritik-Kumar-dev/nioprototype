@@ -23,7 +23,7 @@ Requests go through the Vite dev server so the key never reaches the browser. Pu
 - `POST /api/classify { prompt }` asks the router model for `{ tier, confidence }`.
 - `POST /api/answer { prompt, tier }` streams the answer for that tier.
 
-One model (`nvidia/nemotron-3-ultra-550b-a55b:free`) answers every tier. Each tier is labelled with its own worker in the UI to show the routing, not a different backend.
+One model (`nvidia/nemotron-3-ultra-550b-a55b:free`) answers every tier. The UI labels each tier with a different worker — GLM-5.3 for easy, GPT-6 Luna for medium, GPT-6.1 Sol for hard — to show the routing, not a different backend. Their prices are the current OpenRouter list prices; Claude Opus 5.5 is the single-model baseline every tier is compared against.
 
 ## Token counter CLI
 
